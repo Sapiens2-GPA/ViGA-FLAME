@@ -155,3 +155,54 @@ body {
 #interpolation-image-wrapper img {
   border-radius: 5px;
 }
+
+.long-sequence-comparison {
+  margin-top: 2.5rem;
+}
+
+.comparison-player {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.comparison-player video {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+  background: #000;
+}
+
+.comparison-nav {
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 50%;
+  background: #363636;
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.comparison-nav:hover,
+.comparison-nav:focus-visible {
+  background: #555;
+}
+
+.comparison-counter {
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .comparison-player {
+    gap: 0.25rem;
+  }
+
+  .comparison-nav {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+  }
+}

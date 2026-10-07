@@ -18,15 +18,15 @@ $(document).ready(function() {
 			autoplaySpeed: 3000,
     }
 
-		// Initialize all div with carousel class
-    var carousels = bulmaCarousel.attach('.carousel', options);
+    // The results carousel is still an empty placeholder; initialize it only when it has items.
+    if (document.querySelector('.carousel .item')) {
+      var carousels = bulmaCarousel.attach('.carousel', options);
 
-    // Loop on each carousel initialized
-    for(var i = 0; i < carousels.length; i++) {
-    	// Add listener to  event
-    	carousels[i].on('before:show', state => {
-    		console.log(state);
-    	});
+      for (var i = 0; i < carousels.length; i++) {
+        carousels[i].on('before:show', state => {
+          console.log(state);
+        });
+      }
     }
 
     // Access to bulmaCarousel instance of an element
@@ -39,5 +39,36 @@ $(document).ready(function() {
     }
 
     bulmaSlider.attach();
+
+    const comparisonVideo = document.querySelector('#comparison-video');
+    if (comparisonVideo) {
+      const comparisonVideos = [
+        '0094_e3_yaw_-90_comparison_web.mp4',
+        '0094_e7_yaw_-90_comparison_web.mp4',
+        '0094_e9_yaw_+45_comparison_web.mp4',
+        '0156_e1_yaw_-90_comparison_web.mp4',
+        '0195_e7_yaw_-90_comparison_web.mp4',
+        '0195_e8_yaw_+90_comparison_web.mp4',
+        '0250_e0_yaw_-90_comparison_web.mp4',
+        '0250_e0_yaw_+90_comparison_web.mp4'
+      ];
+      const comparisonCounter = document.querySelector('#comparison-counter');
+      let comparisonIndex = 0;
+
+      function showComparison(index) {
+        comparisonIndex = (index + comparisonVideos.length) % comparisonVideos.length;
+        comparisonVideo.pause();
+        comparisonVideo.src = './static/videos/' + comparisonVideos[comparisonIndex];
+        comparisonVideo.load();
+        comparisonCounter.textContent = 'Video ' + (comparisonIndex + 1) + ' of ' + comparisonVideos.length;
+      }
+
+      document.querySelector('#comparison-previous').addEventListener('click', function() {
+        showComparison(comparisonIndex - 1);
+      });
+      document.querySelector('#comparison-next').addEventListener('click', function() {
+        showComparison(comparisonIndex + 1);
+      });
+    }
 
 })

@@ -135,12 +135,14 @@
       <div class="column is-full-width has-text-centered">
         <h2 class="title is-3">Pipeline</h2>
         <div class="content">
-          <img src="./static/images/method_overview.png"
+          <img src="./static/images/method_overview.svg"
                alt="ViGA-FLAME method overview."/>
           <p>
-            <b>Method overview.</b> We first introduce PG-VAE to learn a unified geometric
-            representation from canonical FLAME surfaces. We then align its frozen representation
-            with image features using the ViGA-FLAME.
+            <b>Method overview.</b> Our framework has two stages. PG-VAE first learns a shared
+            representation of canonical FLAME surfaces and decodes it into both ordered 3D geometry
+            and interpretable FLAME parameters. ViGA then uses asymmetric attention to map features
+            from a frozen Sapiens2 image encoder into the same geometric latent space. Finally, the
+            frozen PG-VAE decoder reconstructs the head surface and FLAME parameters from a single image.
           </p>
         </div>
       </div>
@@ -157,14 +159,44 @@
       <div class="column is-full-width has-text-centered">
         <h2 class="title is-3">Qualitative Comparisons</h2>
         <div class="content">
-          <img src="./static/images/visualization.png"
+          <img src="./static/images/visualization_v2_mod.png"
                alt="Qualitative comparison visualization."/>
           <p>
             <b>Qualitative face reconstruction comparisons.</b> Each row shows one example:
-            <span style="color: #0000FF;">(a) Input image</span>; (b) frontal-view display;
-            (c) Scan/GT mesh; (d) DECA [3]; (e) SMIRK [4]; (f) TEASER [5]; (g) SHeaP [6];
-            <span style="color: #FF0000;">(h) Our ViGA-FLAME</span>.
+            <span style="color: #0000FF; white-space: nowrap;">(a) Input image;</span>
+            <span style="white-space: nowrap;">(b) frontal-view display;</span>
+            <span style="white-space: nowrap;">(c) Optimized / GT mesh;</span>
+            <span style="white-space: nowrap;">(d) DECA [3];</span>
+            <span style="white-space: nowrap;">(e) SMIRK [4];</span>
+            <span style="white-space: nowrap;">(f) TEASER [5];</span>
+            <span style="white-space: nowrap;">(g) SHeaP [6];</span>
+            <span style="color: #FF0000; white-space: nowrap;">(h) Our ViGA-FLAME.</span>
           </p>
+          <div class="long-sequence-comparison">
+            <h3 class="title is-4">Long-sequence comparisons on RenderMe360</h3>
+            <div class="comparison-player">
+              <button id="comparison-previous" class="comparison-nav" type="button"
+                      aria-label="Previous comparison video" aria-controls="comparison-video">&#10094;</button>
+              <video id="comparison-video" controls playsinline preload="metadata"
+                     src="./static/videos/0094_e3_yaw_-90_comparison_web.mp4"
+                     aria-label="RenderMe360 long-sequence comparison video">
+                Your browser does not support HTML5 video.
+              </video>
+              <button id="comparison-next" class="comparison-nav" type="button"
+                      aria-label="Next comparison video" aria-controls="comparison-video">&#10095;</button>
+            </div>
+            <p id="comparison-counter" class="comparison-counter" aria-live="polite">Video 1 of 8</p>
+            <p>
+              <b>Long-sequence results on the RenderMe360 dataset.</b> Each video shows seven
+              items in order: <span style="white-space: nowrap;">(1) Input image;</span>
+              <span style="white-space: nowrap;">(2) Optimized mesh;</span>
+              <span style="white-space: nowrap;">(3) DECA [3];</span>
+              <span style="white-space: nowrap;">(4) SMIRK [4];</span>
+              <span style="white-space: nowrap;">(5) TEASER [5];</span>
+              <span style="white-space: nowrap;">(6) SHeaP [6];</span>
+              <span style="white-space: nowrap;">(7) Our ViGA-FLAME.</span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -180,12 +212,29 @@
       <div class="column is-full-width has-text-centered">
         <h2 class="title is-3">Quantitative Comparisons</h2>
         <div class="content">
+          <img src="./static/images/teaser.png"
+               alt="Cross-view and cross-distribution face reconstruction robustness comparisons."
+               style="width: 100%;"/>
+          <p style="margin-bottom: 2rem;">
+            <b>Face reconstruction robustness.</b> (a) Cross-view robustness shows face-only
+            CD-L1 across five camera yaw angles; each point gives equal weight to the synthetic
+            FLAME and RenderMe360 results at that angle. (b) Cross-distribution robustness
+            compares five synthetic FLAME parameter regimes with the real RenderMe360 dataset.
+            Both panels report face-only CD-L1 in millimeters after rigid alignment; lower is better.
+          </p>
           <table class="table is-bordered is-striped is-fullwidth is-narrow has-text-centered"
                  style="font-size: 0.85rem;">
             <caption style="caption-side: top; text-align: left; font-size: 0.8rem;">
               <b>Face-only reconstruction across synthetic FLAME subsets and the RenderMe360 dataset.</b>
-              Results are averaged over all five camera views after rigid ICP alignment.
-              CD-L1 is reported in millimeters. Best results are in bold.
+              The synthetic subsets separate typical cases from challenging shape, expression,
+              and pose settings, including a combined extreme subset. 
+              ViGA-FLAME is trained on images rendered from FLAME2023, while the baseline methods use FLAME2020-based decoders. 
+              All five synthetic test subsets are generated with FLAME2020, making this a cross-version evaluation for ViGA-FLAME. 
+              The RenderMe360 reference meshes are reconstructed from the dataset’s FLAME2020 fitting annotations.
+              Each result averages the
+              five camera views after rigid ICP alignment. CD-L1 measures surface error in
+              millimeters (lower is better), while F@5 measures agreement within 5 mm (higher
+              is better). Best results are in bold.
               &#916; denotes ViGA-FLAME Param. minus the strongest baseline for each metric;
               negative CD-L1 and positive F@5 indicate improvements.
             </caption>
@@ -274,13 +323,23 @@
               </tr>
             </tbody>
           </table>
+          <p class="has-text-justified">
+            The parametric branch achieves the best results across all five synthetic FLAME subsets, 
+            with particularly clear gains under extreme pose and combined extreme conditions. 
+            RenderMe360 provides a complementary evaluation on real multiview captures, 
+            using reference meshes reconstructed from the dataset’s optimization-fitted FLAME annotations. 
+            Together, these experiments assess reconstruction across controlled parameter variations and real captured faces.
+          </p>
 
           <table class="table is-bordered is-striped is-fullwidth is-narrow has-text-centered"
                  style="font-size: 0.85rem; margin-top: 2rem;">
             <caption style="caption-side: top; text-align: left; font-size: 0.8rem;">
               <b>Face-only reconstruction across camera viewpoints.</b>
-              Results are averaged across all five synthetic FLAME parameter subsets after rigid ICP
-              alignment. CD-L1 is reported in millimeters. Best results are in bold.
+              The same synthetic evaluation is regrouped by viewing angle: frontal (0&#176;),
+              oblique (&plusmn;45&#176;), and profile (&plusmn;90&#176;). Each group pools all five
+              FLAME parameter subsets after rigid ICP alignment, isolating the effect of
+              viewpoint while retaining variation in shape, expression, and pose. CD-L1 is in
+              millimeters; lower CD-L1 and higher F@5 are better. Best results are in bold.
             </caption>
             <thead>
               <tr>
@@ -334,11 +393,21 @@
               </tr>
             </tbody>
           </table>
+          <p class="has-text-justified">
+            Both ViGA-FLAME branches retain their lead across the three angle groups. Their
+            errors increase and F@5 scores decrease at profile views, showing that side views
+            remain harder than frontal views even when the global rigid pose is aligned.
+          </p>
 
           <table class="table is-bordered is-striped is-fullwidth is-narrow has-text-centered"
                  style="font-size: 0.85rem; margin-top: 2rem;">
             <caption style="caption-side: top; text-align: left; font-size: 0.8rem;">
               <b>Ablation studies of PG-VAE variations.</b>
+              These results use randomly sampled FLAME states with varied orientations.
+              The three columns report mean corresponding-vertex errors in millimeters for the
+              direct geometry reconstruction, the decoded parametric mesh, and the disagreement
+              between those two outputs. Lower is better. Unlike the face-only comparisons above,
+              these errors are measured without rigid alignment.
             </caption>
             <thead>
               <tr>
@@ -371,6 +440,13 @@
               </tr>
             </tbody>
           </table>
+          <p class="has-text-justified">
+            Starting from direct reconstruction and FLAME parameter supervision, the variants
+            add supervision for the decoded parametric surface and then encourage agreement
+            between the two decoding branches. The last two rows compare replacing the learned
+            semantic queries with FLAME-conditioned embeddings against adding those embeddings
+            to the queries. Query replacement yields the lowest error in all three measures.
+          </p>
         </div>
       </div>
     </div>
